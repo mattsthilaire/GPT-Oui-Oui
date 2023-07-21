@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "chatgpt-oui-oui"
+version = "0.1.0"
+description = ""
+authors = ["MattStHilaire"]
+readme = "README.md"
+packages = [{include = "chatgpt_oui_oui"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+openai = "^0.27.8"
+requests = "^2.31.0"
+beautifulsoup4 = "^4.12.2"
+mypy = "^1.4.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
