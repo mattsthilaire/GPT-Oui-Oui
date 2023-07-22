@@ -1,12 +1,26 @@
 import argparse
 import os
+from typing import Any, Dict, List, TypedDict
 
 import openai
+from typing_extensions import Unpack
 
 
-def main(**kwargs):
+class RequestParams(TypedDict):
+    """
+    Class designating keyword args and types
+    """
+    source_file: str
+    destination_file: str
+    max_tokens: int
+    language: str
+
+
+def main(*args: List[Any], **kwargs: Unpack[RequestParams]) -> None:
     """
     Main caller to create question output
+
+
     """
 
     org = os.getenv("OPENAI_ORG_NAME", False)
@@ -21,14 +35,14 @@ def main(**kwargs):
             "Open AI org or api key missing. Please check env variables.")
 
     # default prompt for GPT
-    prompt = """
-    You are a computer assisted French tutor. A user will provide an article or transcription of
-    a podcast in French. You are to create 5 multiple choice questions that ask questions about
+    prompt = f"""
+    You are a computer assisted {kwargs["language"]} tutor. A user will provide an article or transcription of
+    a podcast in {kwargs["language"]}. You are to create 5 multiple choice questions that ask questions about
     the text you receive. The quetions should vary in difficuly. You should ask questions
     that require context information, as well as questions that have simple one or two word answers.
 
     Each question will have 4 options to choose from: A, B, C, or D. After you list all the questions
-    and answer choices, you will provide the answers, along with any less common French vocabulary
+    and answer choices, you will provide the answers, along with any less common {kwargs["language"]} vocabulary
     words and their definition in English.
     """
 
@@ -59,7 +73,7 @@ def main(**kwargs):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Generate questions to French Text via GPT")
+        description="Generate questions to foreign language text via GPT")
     parser.add_argument(
         "-f", help="Files that contains the source text and then where to store GPT's response",
         nargs=2,
@@ -71,8 +85,17 @@ if __name__ == "__main__":
         dest="max_tokens",
         default=8_000,
         type=int)
+    parser.add_argument(
+        "-lang",
+        help="Language for article and questions file.",
+        dest="language",
+        default="French",
+        type=str
+    )
+
     args = parser.parse_args()
 
     main(source_file=args.files[0],
          destination_file=args.files[1],
-         max_tokens=args.max_tokens)
+         max_tokens=args.max_tokens,
+         language=args.language)
